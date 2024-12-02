@@ -74,6 +74,7 @@ void ATPSPlayer::Tick(float DeltaTime)
 	//해당 내용이 전부 들어가있는 함수로 실행시켜줌
 	AddMovementInput(direction);
 	direction = FVector::ZeroVector;
+
 }
 
 // Called to bind functionality to input
@@ -88,6 +89,8 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		PlayerInput->BindAction(ia_Turn, ETriggerEvent::Triggered, this, &ATPSPlayer::Turn);
 		PlayerInput->BindAction(ia_LookUp, ETriggerEvent::Triggered, this, &ATPSPlayer::LookUp);
 		PlayerInput->BindAction(ia_Move, ETriggerEvent::Triggered, this, &ATPSPlayer::Move);
+		//점프는 바인드 시킬때 트루 펄스 이기때문에 Started로 해준다.
+		PlayerInput->BindAction(ia_Jump, ETriggerEvent::Started, this, &ATPSPlayer::InputJump);
 	}
 
 }
@@ -112,3 +115,9 @@ void ATPSPlayer::Move(const FInputActionValue& inputValue)
 	//좌우 입력 이벤트 처리
 	direction.Y = value.Y;
 }
+
+void ATPSPlayer::InputJump(const FInputActionValue& inputValue)
+{
+	Jump();
+}
+

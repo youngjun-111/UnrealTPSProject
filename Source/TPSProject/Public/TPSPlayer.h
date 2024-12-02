@@ -21,8 +21,6 @@ public:
 		class UInputAction* ia_LookUp;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_Turn;
-
-
 	//좌우 회전 입력 처리
 	void Turn(const struct FInputActionValue& inputValue);
 	//상하 회전 입력 처리
@@ -38,6 +36,12 @@ public:
 	FVector direction;
 	//이동 함수
 	void Move(const struct FInputActionValue& inputValue);
+
+	//점프 클래스
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* ia_Jump;
+	//점프 함수
+	void InputJump(const struct FInputActionValue& inputValue);
 
 protected:
 	// Called when the game starts or when spawned
