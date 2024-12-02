@@ -74,7 +74,6 @@ void ATPSPlayer::Tick(float DeltaTime)
 	//해당 내용이 전부 들어가있는 함수로 실행시켜줌
 	AddMovementInput(direction);
 	direction = FVector::ZeroVector;
-
 }
 
 // Called to bind functionality to input
