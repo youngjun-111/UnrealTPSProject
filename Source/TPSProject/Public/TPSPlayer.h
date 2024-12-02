@@ -34,9 +34,10 @@ public:
 		float walkSpeed = 600;
 	//이동 방향
 	FVector direction;
-	//이동 함수
+	//이동 함수 조건 함수
 	void Move(const struct FInputActionValue& inputValue);
-
+	//실제 이동 함수를 작성
+	void PlayerMove();
 	//점프 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_Jump;

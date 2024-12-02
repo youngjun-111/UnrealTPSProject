@@ -39,6 +39,7 @@ ATPSPlayer::ATPSPlayer()
 	//해당 컨트롤러는 Yaw만 트루로 설정 Yaw는 z축 회전 Roll은 X축 회전 Pich는 Y충 회전
 	tpsCamComp->bUsePawnControlRotation = false;
 	bUseControllerRotationYaw = true;
+	JumpMaxCount = 2;
 }
 
 // Called when the game starts or when spawned
@@ -63,6 +64,11 @@ void ATPSPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	PlayerMove();
+}
+
+void ATPSPlayer::PlayerMove()
+{
 	//플레이어 이동처리
 	//등속 운동
 	//P(결과 위치) = P0(현재 위치) + V(속도) X T(시간)
@@ -72,6 +78,7 @@ void ATPSPlayer::Tick(float DeltaTime)
 	//FVector P = P0 + vt;
 	//SetActorLocation(P);
 	//해당 내용이 전부 들어가있는 함수로 실행시켜줌
+	direction = FTransform(GetControlRotation()).TransformVector(direction);
 	AddMovementInput(direction);
 	direction = FVector::ZeroVector;
 }
@@ -91,7 +98,6 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		//점프는 바인드 시킬때 트루 펄스 이기때문에 Started로 해준다.
 		PlayerInput->BindAction(ia_Jump, ETriggerEvent::Started, this, &ATPSPlayer::InputJump);
 	}
-
 }
 
 void ATPSPlayer::Turn(const FInputActionValue& inputValue)
