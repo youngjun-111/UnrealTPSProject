@@ -4,6 +4,9 @@
 #include "TPSPlayer.h"
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "InputActionValue.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -27,10 +30,15 @@ ATPSPlayer::ATPSPlayer()
 	springArmComp->SetupAttachment(RootComponent);
 	springArmComp->SetRelativeLocation(FVector(0, 70, 90));
 	springArmComp->TargetArmLength = 400;
-
+	//해당 컨트롤러 로테이션을 트루로
+	springArmComp->bUsePawnControlRotation = true;
 	//3-2. Camera컴포넌트를 붙인다.
+
 	tpsCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("TpsCamComp"));
 	tpsCamComp->SetupAttachment(springArmComp);
+	//해당 컨트롤러는 Yaw만 트루로 설정 Yaw는 z축 회전 Roll은 X축 회전 Pich는 Y충 회전
+	tpsCamComp->bUsePawnControlRotation = false;
+	bUseControllerRotationYaw = true;
 }
 
 // Called when the game starts or when spawned
@@ -38,6 +46,16 @@ void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	auto pc = Cast<APlayerController>(Controller);
+	if (pc)
+	{
+		auto subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer());
+
+		if (subsystem)
+		{
+			subsystem->AddMappingContext(imc_TPS, 0);
+		}
+	}
 }
 
 // Called every frame
@@ -52,5 +70,34 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	auto PlayerInput = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
+
+	if (PlayerInput)
+	{
+		PlayerInput->BindAction(ia_Turn, ETriggerEvent::Triggered, this, &ATPSPlayer::Turn);
+		PlayerInput->BindAction(ia_LookUp, ETriggerEvent::Triggered, this, &ATPSPlayer::LookUp);
+		PlayerInput->BindAction(ia_Move, ETriggerEvent::Triggered, this, &ATPSPlayer::Move);
+	}
+
 }
 
+void ATPSPlayer::Turn(const FInputActionValue& inputValue)
+{
+	float value = inputValue.Get<float>();
+	AddControllerYawInput(value);
+}
+
+void ATPSPlayer::LookUp(const FInputActionValue& inputValue)
+{
+	float value = inputValue.Get<float>();
+	AddControllerPitchInput(value);
+}
+
+void ATPSPlayer::Move(const FInputActionValue& inputValue)
+{
+	FVector2D value = inputValue.Get<FVector2D>();
+	//상하 입력 이벤트 처리
+	direction.X = value.X;
+	//좌우 입력 이벤트 처리
+	direction.Y = value.Y;
+}

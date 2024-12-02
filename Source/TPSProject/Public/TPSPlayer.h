@@ -15,6 +15,30 @@ public:
 	// Sets default values for this character's properties
 	ATPSPlayer();
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputMappingContext* imc_TPS;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* ia_LookUp;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* ia_Turn;
+
+
+	//좌우 회전 입력 처리
+	void Turn(const struct FInputActionValue& inputValue);
+	//상하 회전 입력 처리
+	void LookUp(const struct FInputActionValue& inputValue);
+
+	//이동 입력 처리
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* ia_Move;
+	//이동 속도 처리
+	UPROPERTY(EditAnywhere, Category = PlayerSetting)
+		float walkSpeed = 600;
+	//이동 방향
+	FVector direction;
+	//이동 함수
+	void Move(const struct FInputActionValue& inputValue);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
