@@ -63,6 +63,14 @@ void ATPSPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//플레이어 이동처리
+	//등속 운동
+	//P(결과 위치) = P0(현재 위치) + V(속도) X T(시간)
+	FVector P0 = GetActorLocation();
+	FVector vt = direction * walkSpeed * DeltaTime;
+	FVector P = P0 + vt;
+	SetActorLocation(P);
+	direction = FVector::ZeroVector;
 }
 
 // Called to bind functionality to input
