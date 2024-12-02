@@ -40,7 +40,7 @@ public:
 	//점프 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_Jump;
-	//점프 함수
+	//점프 함수 언리얼에서 Jump함수를 지원하기에 함수명을 InputJump로 작성
 	void InputJump(const struct FInputActionValue& inputValue);
 
 protected:
