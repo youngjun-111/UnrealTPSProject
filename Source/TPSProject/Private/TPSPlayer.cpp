@@ -81,6 +81,7 @@ void ATPSPlayer::Tick(float DeltaTime)
 	PlayerMove();
 }
 
+//실제 이동 함수
 void ATPSPlayer::PlayerMove()
 {
 	//플레이어 이동처리
@@ -97,6 +98,7 @@ void ATPSPlayer::PlayerMove()
 	direction = FVector::ZeroVector;
 }
 
+//인풀 바인드 부분
 // Called to bind functionality to input
 void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -115,18 +117,21 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	}
 }
 
+//좌우 회전 함수
 void ATPSPlayer::Turn(const FInputActionValue& inputValue)
 {
 	float value = inputValue.Get<float>();
 	AddControllerYawInput(value);
 }
 
+//위아래 회전 함수
 void ATPSPlayer::LookUp(const FInputActionValue& inputValue)
 {
 	float value = inputValue.Get<float>();
 	AddControllerPitchInput(value);
 }
 
+//이동 처리 함수
 void ATPSPlayer::Move(const FInputActionValue& inputValue)
 {
 	FVector2D value = inputValue.Get<FVector2D>();
@@ -136,11 +141,12 @@ void ATPSPlayer::Move(const FInputActionValue& inputValue)
 	direction.Y = value.Y;
 }
 
+//점프 함수
 void ATPSPlayer::InputJump(const FInputActionValue& inputValue)
 {
 	Jump();
 }
-//
+
 //void ATPSPlayer::Fire(const FInputActionValue& inputValue)
 //{
 //
