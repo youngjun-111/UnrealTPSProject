@@ -15,6 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	ABullet();
 
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -30,4 +31,7 @@ public:
 		class USphereComponent* collisionComp;
 	UPROPERTY(VisibleAnywhere, Category=BodyMesh)
 		class UStaticMeshComponent* bodyComp;
+
+	//총알 제거 함수 선언
+	void Die();
 };

@@ -40,13 +40,23 @@ ABullet::ABullet()
 	movementComp->bShouldBounce = true;
 	//반동 값
 	movementComp->Bounciness = 0.3f;
+
+	//생명 시간 주기
+	//InitialLifeSpan = 2.0f;
 }
 
 // Called when the game starts or when spawned
 void ABullet::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	//Die함수를 생성하여 2초뒤에 삭제되게끔 하는 함수를 제작할 수도 있다.
+	FTimerHandle deathTimer;
+	//GetWorld()->GetTimerManager().SetTimer(deathTimer, this, &ABullet::Die, 2.0f, false);
+
+	GetWorld()->GetTimerManager().SetTimer(deathTimer, FTimerDelegate::CreateLambda([this]()->void
+		{
+			Destroy();
+		}), 2.0f, false);
 }
 
 // Called every frame
@@ -56,3 +66,7 @@ void ABullet::Tick(float DeltaTime)
 
 }
 
+//void ABullet::Die()
+//{
+//	Destroy();
+//}
