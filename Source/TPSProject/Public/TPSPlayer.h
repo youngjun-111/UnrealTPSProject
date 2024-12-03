@@ -44,15 +44,13 @@ public:
 	//점프 함수 언리얼에서 Jump함수를 지원하기에 함수명을 InputJump로 작성
 	void InputJump(const struct FInputActionValue& inputValue);
 
-	//발사 클래스
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-		class UInputAction* ia_Fire;
-	//발사 함수
-	void Fire(const struct FInputActionValue& inputValue);
+	////발사 클래스
+	//UPROPERTY(EditDefaultsOnly, Category = "Input")
+	//	class UInputAction* ia_Fire;
+	////발사 함수
+	//void Fire(const struct FInputActionValue& inputValue);
 
-	////총 스켈레탈메시 클래스
-	//UPROPERTY(VisibleAnywhere, Category = GunMesh)
-	//	class USkeletalMeshComponent* gunMeshComp;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -70,4 +68,7 @@ public:
 		class USpringArmComponent* springArmComp;
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		class UCameraComponent* tpsCamComp;
+	//총 스켈레탈메시 클래스
+	UPROPERTY(VisibleAnywhere, Category = GunMesh)
+		class USkeletalMeshComponent* gunMeshComp;
 };

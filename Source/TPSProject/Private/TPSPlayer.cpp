@@ -40,6 +40,20 @@ ATPSPlayer::ATPSPlayer()
 	tpsCamComp->bUsePawnControlRotation = false;
 	bUseControllerRotationYaw = true;
 	JumpMaxCount = 2;
+
+	// 4. 총 스켈레탈메시 컴포넌트 등록
+	gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComp"));
+	// 4-1. 부모 컴포넌트를 Mesh 컴포넌트로 설정
+	gunMeshComp->SetupAttachment(GetMesh());
+	// 4-2. 스켈레탈메시 데이터 로드
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
+	if(TempGunMesh.Succeeded())
+	{
+		//4-4 스켈레탈 메시 데이터 할당
+		gunMeshComp->SetSkeletalMesh(TempGunMesh.Object);
+		//4-5 위치 조정하기
+		gunMeshComp->SetRelativeLocation(FVector(-14, 52, 120));
+	}
 }
 
 // Called when the game starts or when spawned
@@ -97,7 +111,7 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		PlayerInput->BindAction(ia_Move, ETriggerEvent::Triggered, this, &ATPSPlayer::Move);
 		//점프는 바인드 시킬때 트루 펄스 이기때문에 Started로 해준다.
 		PlayerInput->BindAction(ia_Jump, ETriggerEvent::Started, this, &ATPSPlayer::InputJump);
-		PlayerInput->BindAction(ia_Fire, ETriggerEvent::Started, this, &ATPSPlayer::Fire);
+		//PlayerInput->BindAction(ia_Fire, ETriggerEvent::Started, this, &ATPSPlayer::Fire);
 	}
 }
 
@@ -126,8 +140,8 @@ void ATPSPlayer::InputJump(const FInputActionValue& inputValue)
 {
 	Jump();
 }
-
-void ATPSPlayer::Fire(const FInputActionValue& inputValue)
-{
-
-}
+//
+//void ATPSPlayer::Fire(const FInputActionValue& inputValue)
+//{
+//
+//}
