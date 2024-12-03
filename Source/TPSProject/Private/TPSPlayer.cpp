@@ -79,7 +79,9 @@ ATPSPlayer::ATPSPlayer()
 void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	//기본적으로 스나이퍼를 착용하도록 설정
+	ChangeToSniperGun(FInputActionValue());
+
 	auto pc = Cast<APlayerController>(Controller);
 	if (pc)
 	{

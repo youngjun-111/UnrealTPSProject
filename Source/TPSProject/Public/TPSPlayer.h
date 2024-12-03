@@ -72,6 +72,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = BulletFactory)
 		TSubclassOf<class ABullet> bulletFactory;
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
