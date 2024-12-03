@@ -32,15 +32,19 @@ ABullet::ABullet()
 	movementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComp"));
 	//movemonet 컴포넌트가 갱신시킬 컴포넌트 지정
 	movementComp->SetUpdatedComponent(collisionComp);
+	//속도를 한번에 처리하기위한 기능을 작성해줄 것이다. 
+	
+ 
 	//초기속도
-	movementComp->InitialSpeed = 5000;
+	//movementComp->InitialSpeed = 5000;
 	//최대속도
-	movementComp->MaxSpeed = 5000;
+	//movementComp->MaxSpeed = 5000;
 	//반동 여부
 	movementComp->bShouldBounce = true;
 	//반동 값
 	movementComp->Bounciness = 0.3f;
 
+	//인스턴스 삭제 1
 	//생명 시간 주기
 	//InitialLifeSpan = 2.0f;
 }
@@ -51,8 +55,9 @@ void ABullet::BeginPlay()
 	Super::BeginPlay();
 	//Die함수를 생성하여 2초뒤에 삭제되게끔 하는 함수를 제작할 수도 있다.
 	FTimerHandle deathTimer;
+	//인스턴스 삭제 2
 	//GetWorld()->GetTimerManager().SetTimer(deathTimer, this, &ABullet::Die, 2.0f, false);
-
+	//인스턴스 삭제 3.
 	GetWorld()->GetTimerManager().SetTimer(deathTimer, FTimerDelegate::CreateLambda([this]()->void
 		{
 			Destroy();
@@ -66,6 +71,16 @@ void ABullet::Tick(float DeltaTime)
 
 }
 
+void ABullet::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	if (PropertyChangedEvent.GetPropertyName() == TEXT("speed"))
+	{
+		movementComp->InitialSpeed = speed;
+		movementComp->MaxSpeed = speed;
+	}
+}
+
+//인스턴스 삭제 2(h파일에 함수 선언 해줘야함)
 //void ABullet::Die()
 //{
 //	Destroy();

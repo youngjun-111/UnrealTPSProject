@@ -53,6 +53,21 @@ public:
 	//발사 함수
 	void InputFire(const struct FInputActionValue& inputValue);
 
+	//각 총 교체 클래스
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* ia_GrenadeGun;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* ia_SniperGun;
+
+	//유탄총을 사용하고 있는지에 대한 여부
+	bool bUsingGrenadeGun = true;
+
+	//각 무기 교체 함수
+	void ChangeToGrenadeGun(const struct FInputActionValue& inputValue);
+
+	void ChangeToSniperGun(const struct FInputActionValue& inputValue);
+
 	//총알 공장 (프리팹생성 느낌)
 	UPROPERTY(EditDefaultsOnly, Category = BulletFactory)
 		TSubclassOf<class ABullet> bulletFactory;
@@ -78,4 +93,7 @@ public:
 	//총 스켈레탈메시 클래스
 	UPROPERTY(VisibleAnywhere, Category = GunMesh)
 		class USkeletalMeshComponent* gunMeshComp;
+	//스나이프 스테틱 메시 클래스
+	UPROPERTY(VisibleAnywhere, Category = GunMesh)
+		class UStaticMeshComponent* sniperGunComp;
 };

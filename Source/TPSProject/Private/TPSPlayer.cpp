@@ -8,8 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "Bullet.h"
-
-
+#include <Components/StaticMeshComponent.h>
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -56,6 +55,23 @@ ATPSPlayer::ATPSPlayer()
 		gunMeshComp->SetSkeletalMesh(TempGunMesh.Object);
 		//4-5 위치 조정하기
 		gunMeshComp->SetRelativeLocation(FVector(-14, 52, 120));
+	}
+
+	//5. 스나이퍼건 컴포넌트 등록
+	sniperGunComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SniperGunComp"));
+	//5-1. 부모 컴포넌트를 Mesh 컴포넌트로 설정
+	sniperGunComp->SetupAttachment(GetMesh());
+	//5-2. 해당 컴포넌트의 경로를 로드해준다
+	ConstructorHelpers::FObjectFinder<UStaticMesh> TempSniperMesh(TEXT("StaticMesh'/Game/SniperGun/sniper1.sniper1'"));
+	//5-3. 로드에 성공했다면
+	if (TempSniperMesh.Succeeded())
+	{
+		//5-4. 스태틱메시 데이터 할당
+		sniperGunComp->SetStaticMesh(TempSniperMesh.Object);
+		//5-5. 위치 조정
+		sniperGunComp->SetRelativeLocation(FVector(-22, 55, 120));
+		//5-6 크기 조정하기
+		sniperGunComp->SetRelativeScale3D(FVector(0.15f));
 	}
 }
 
@@ -121,6 +137,10 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 		//발사 이벤트 처리 함수 바인딩
 		PlayerInput->BindAction(ia_Fire, ETriggerEvent::Started, this, &ATPSPlayer::InputFire);
+
+		//각 총 교체 이벤트 처리 함수 바인딩
+		PlayerInput->BindAction(ia_GrenadeGun, ETriggerEvent::Started, this, &ATPSPlayer::ChangeToGrenadeGun);
+		PlayerInput->BindAction(ia_SniperGun, ETriggerEvent::Started, this, &ATPSPlayer::ChangeToSniperGun);
 	}
 }
 
@@ -160,4 +180,20 @@ void ATPSPlayer::InputFire(const FInputActionValue& inputValue)
 	//총알 발사 처리
 	FTransform firePosition = gunMeshComp->GetSocketTransform(TEXT("FirePosition"));
 	GetWorld()->SpawnActor<ABullet>(bulletFactory, firePosition);
+}
+
+//기본 총 호출 함수
+void ATPSPlayer::ChangeToGrenadeGun(const FInputActionValue& inputValue)
+{
+	bUsingGrenadeGun = true;
+	sniperGunComp->SetVisibility(false);
+	gunMeshComp->SetVisibility(true);
+}
+
+//스나이퍼 건 호출 함수
+void ATPSPlayer::ChangeToSniperGun(const FInputActionValue& inputValue)
+{
+	bUsingGrenadeGun = false;
+	sniperGunComp->SetVisibility(true);
+	gunMeshComp->SetVisibility(false);
 }
