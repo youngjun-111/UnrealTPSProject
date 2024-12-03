@@ -15,8 +15,10 @@ public:
 	// Sets default values for this character's properties
 	ATPSPlayer();
 
+	//인풋 매핑 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputMappingContext* imc_TPS;
+	//회전 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_LookUp;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -34,23 +36,22 @@ public:
 		float walkSpeed = 600;
 	//이동 방향
 	FVector direction;
-	//이동 함수 조건 함수
+	//이동 조건 함수
 	void Move(const struct FInputActionValue& inputValue);
 	//실제 이동 함수를 작성
 	void PlayerMove();
+
 	//점프 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_Jump;
 	//점프 함수 언리얼에서 Jump함수를 지원하기에 함수명을 InputJump로 작성
 	void InputJump(const struct FInputActionValue& inputValue);
 
-	////발사 클래스
-	//UPROPERTY(EditDefaultsOnly, Category = "Input")
-	//	class UInputAction* ia_Fire;
-	////발사 함수
-	//void Fire(const struct FInputActionValue& inputValue);
-
-
+	//발사 클래스
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* ia_Fire;
+	//발사 함수
+	void Fire(const struct FInputActionValue& inputValue);
 
 protected:
 	// Called when the game starts or when spawned
@@ -64,8 +65,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
+	//스프링암 클래스
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		class USpringArmComponent* springArmComp;
+	//카메라 클래스
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		class UCameraComponent* tpsCamComp;
 	//총 스켈레탈메시 클래스
