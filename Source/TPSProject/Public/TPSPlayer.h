@@ -50,9 +50,9 @@ public:
 	//¹ß»ç ÇÔ¼ö
 	void Fire(const struct FInputActionValue& inputValue);
 
-	//ÃÑ ½ºÄÌ·¹Å»¸Þ½Ã Å¬·¡½º
-	UPROPERTY(VisibleAnywhere, Category = GunMesh)
-		class USkeletalMeshComponent* gunMeshComp;
+	////ÃÑ ½ºÄÌ·¹Å»¸Þ½Ã Å¬·¡½º
+	//UPROPERTY(VisibleAnywhere, Category = GunMesh)
+	//	class USkeletalMeshComponent* gunMeshComp;
 
 protected:
 	// Called when the game starts or when spawned
