@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
+#include "Bullet.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -98,7 +99,7 @@ void ATPSPlayer::PlayerMove()
 	direction = FVector::ZeroVector;
 }
 
-//인풀 바인드 부분
+//인풋 바인드 부분
 // Called to bind functionality to input
 void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -108,12 +109,16 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 	if (PlayerInput)
 	{
+		//이동 관련 이벤트 처리 함수 바인딩
 		PlayerInput->BindAction(ia_Turn, ETriggerEvent::Triggered, this, &ATPSPlayer::Turn);
 		PlayerInput->BindAction(ia_LookUp, ETriggerEvent::Triggered, this, &ATPSPlayer::LookUp);
 		PlayerInput->BindAction(ia_Move, ETriggerEvent::Triggered, this, &ATPSPlayer::Move);
-		//점프는 바인드 시킬때 트루 펄스 이기때문에 Started로 해준다.
+
+		//점프 이벤트 처리 함수 바인딩
 		PlayerInput->BindAction(ia_Jump, ETriggerEvent::Started, this, &ATPSPlayer::InputJump);
-		PlayerInput->BindAction(ia_Fire, ETriggerEvent::Started, this, &ATPSPlayer::Fire);
+
+		//발사 이벤트 처리 함수 바인딩
+		PlayerInput->BindAction(ia_Fire, ETriggerEvent::Started, this, &ATPSPlayer::InputFire);
 	}
 }
 
@@ -147,7 +152,10 @@ void ATPSPlayer::InputJump(const FInputActionValue& inputValue)
 	Jump();
 }
 
-void ATPSPlayer::Fire(const FInputActionValue& inputValue)
+//발사 함수
+void ATPSPlayer::InputFire(const FInputActionValue& inputValue)
 {
-
+	//총알 발사 처리
+	FTransform firePosition = gunMeshComp->GetSocketTransform(TEXT("FirePosition"));
+	GetWorld()->SpawnActor<ABullet>(bulletFactory, firePosition);
 }

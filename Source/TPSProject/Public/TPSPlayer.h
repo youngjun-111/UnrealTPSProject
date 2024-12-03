@@ -51,7 +51,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_Fire;
 	//발사 함수
-	void Fire(const struct FInputActionValue& inputValue);
+	void InputFire(const struct FInputActionValue& inputValue);
+
+	//총알 공장 (프리팹생성 느낌)
+	UPROPERTY(EditDefaultsOnly, Category = BulletFactory)
+		TSubclassOf<class ABullet> bulletFactory;
 
 protected:
 	// Called when the game starts or when spawned
