@@ -97,6 +97,11 @@ void ATPSPlayer::BeginPlay()
 
 	//1. 스나이퍼 UI위젯 인스턴스 생성
 	_sniperUI = CreateWidget(GetWorld(), sniperUIFactory);
+	//2. 일반 조준 UI 크로스헤어 인스턴스 생성
+	_crosshairUI = CreateWidget(GetWorld(), crosshairUIFactory);
+	//3. 일반 조준 UI를 등록
+	_crosshairUI->AddToViewport();
+
 	//기본적으로 스나이퍼를 착용하도록 설정
 	ChangeToSniperGun(FInputActionValue());
 }
@@ -223,6 +228,17 @@ void ATPSPlayer::InputFire(const FInputActionValue& inputValue)
 			//총알 파편 효과 인스턴스 생성
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletEffectFactory, bulletTrans);
 		}
+		auto hitComp = hitInfo.GetComponent();
+		//1. 컴포넌트에 물리가 적용되어 있다면..
+		if (hitComp && hitComp->IsSimulatingPhysics())
+		{
+			//2. 조준한 방향이 필요
+			FVector dir = (endPos - startPos).GetSafeNormal();
+			//날려버릴 힘(F=ma)
+			FVector force = dir * hitComp->GetMass() * 500000;
+			//3. 그방향으로 날리기
+			hitComp->AddForceAtLocation(force, hitInfo.ImpactPoint);
+		}
 	}
 }
 
@@ -245,6 +261,8 @@ void ATPSPlayer::ChangeToSniperGun(const FInputActionValue& inputValue)
 //스나이퍼 모드 함수
 void ATPSPlayer::SniperAim(const struct FInputActionValue& inputValue)
 {
+	//일반 총이면 리턴 시킨다.
+	if (bUsingGrenadeGun) { return; }
 	//Pressed 입력처리
 	if(bSniperAim == false)
 	{
@@ -254,7 +272,11 @@ void ATPSPlayer::SniperAim(const struct FInputActionValue& inputValue)
 		_sniperUI->AddToViewport();
 		//3. 카메라의 시야각 Field Of View를 설정
 		tpsCamComp->SetFieldOfView(45.0f);
-	} else
+		//4. 일반 조준 UI제거
+		_crosshairUI->RemoveFromParent();
+	} 
+	//UnPressed 입력 처리
+	else
 	{
 		//1. 스나이퍼 조준 모드 비활성화
 		bSniperAim = false;
@@ -262,5 +284,7 @@ void ATPSPlayer::SniperAim(const struct FInputActionValue& inputValue)
 		_sniperUI->RemoveFromParent();
 		//3. 카메라 시야각 원래대로 복권
 		tpsCamComp->SetFieldOfView(90.0f);
+		//4. 일반 조준 UI 등록
+		_crosshairUI->AddToViewport();
 	}
 }

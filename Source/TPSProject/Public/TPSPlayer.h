@@ -18,6 +18,9 @@ public:
 	//인풋 매핑 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputMappingContext* imc_TPS;
+
+	//////////////////////////////////////이동 관련 선언 부//////////////////////////////////////
+	// 
 	//회전 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_LookUp;
@@ -47,6 +50,10 @@ public:
 	//점프 함수 언리얼에서 Jump함수를 지원하기에 함수명을 InputJump로 작성
 	void InputJump(const struct FInputActionValue& inputValue);
 
+	//////////////////////////////////////이동 관련 선언 부//////////////////////////////////////
+	
+	//////////////////////////////////////무기 관련 선언 부//////////////////////////////////////
+	
 	//발사 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_Fire;
@@ -72,6 +79,12 @@ public:
 	//스나이퍼 UI 위젯 인스턴스
 	UPROPERTY()
 		class UUserWidget* _sniperUI;
+	//일반 조준 크로스헤어UI 위젯
+	UPROPERTY(EditDefaultsOnly, Category = BulletEffect)
+		TSubclassOf<class UUserWidget> crosshairUIFactory;
+	//크로스헤어 인스턴스
+	UPROPERTY()
+	class UUserWidget* _crosshairUI;
 
 	//유탄총을 사용하고 있는지에 대한 여부
 	bool bUsingGrenadeGun = true;
@@ -85,10 +98,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = BulletFactory)
 		TSubclassOf<class ABullet> bulletFactory;
 
+	//////////////////////////////////////무기 관련 선언 부//////////////////////////////////////
+	
+	//////////////////////////////////////이펙트 관련 선언 부////////////////////////////////////
 
 	//이펙트 효과 공장
 	UPROPERTY(EditAnywhere, Category = BulletEffect)
 		class UParticleSystem* bulletEffectFactory;
+
+	//////////////////////////////////////이펙트 관련 선언 부////////////////////////////////////
 
 protected:
 	// Called when the game starts or when spawned
