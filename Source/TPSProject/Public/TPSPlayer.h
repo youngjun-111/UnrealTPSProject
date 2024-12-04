@@ -20,7 +20,7 @@ public:
 		class UInputMappingContext* imc_TPS;
 
 	//////////////////////////////////////이동 관련 선언 부//////////////////////////////////////
-	// 
+	
 	//회전 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_LookUp;
@@ -51,7 +51,7 @@ public:
 	void InputJump(const struct FInputActionValue& inputValue);
 
 	//////////////////////////////////////이동 관련 선언 부//////////////////////////////////////
-	
+
 	//////////////////////////////////////무기 관련 선언 부//////////////////////////////////////
 	
 	//발사 클래스
@@ -63,50 +63,45 @@ public:
 	//각 총 교체 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_GrenadeGun;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_SniperGun;
+
+	//유탄총을 사용하고 있는지에 대한 여부
+	bool bUsingGrenadeGun = true;
+	//스나이퍼를 사용하고 있는지에 대한 여부
+	bool bSniperAim = false;
 
 	//스나이퍼 조준 처리 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_Sniper;
 	void SniperAim(const struct FInputActionValue& inputValue);
-	//스나이퍼를 사용하고 있는지에 대한 여부
-	bool bSniperAim = false;
-	//스나이퍼 UI위젯 공장
+
+	//스나이퍼 조준 UI 위젯 공장
 	UPROPERTY(EditDefaultsOnly, Category = SniperUI)
 		TSubclassOf<class UUserWidget> sniperUIFactory;
 	//스나이퍼 UI 위젯 인스턴스
 	UPROPERTY()
 		class UUserWidget* _sniperUI;
-	//일반 조준 크로스헤어UI 위젯
+	//일반 조준 크로스헤어UI 위젯 공장
 	UPROPERTY(EditDefaultsOnly, Category = BulletEffect)
 		TSubclassOf<class UUserWidget> crosshairUIFactory;
-	//크로스헤어 인스턴스
+	//크로스헤어 UI 위젯 인스턴스
 	UPROPERTY()
 	class UUserWidget* _crosshairUI;
 
-	//유탄총을 사용하고 있는지에 대한 여부
-	bool bUsingGrenadeGun = true;
 
 	//각 무기 교체 함수
 	void ChangeToGrenadeGun(const struct FInputActionValue& inputValue);
 
 	void ChangeToSniperGun(const struct FInputActionValue& inputValue);
 
-	//총알 공장 (프리팹생성 느낌)
+	//총알 적용 공장 (프리팹생성 느낌)
 	UPROPERTY(EditDefaultsOnly, Category = BulletFactory)
 		TSubclassOf<class ABullet> bulletFactory;
 
-	//////////////////////////////////////무기 관련 선언 부//////////////////////////////////////
-	
-	//////////////////////////////////////이펙트 관련 선언 부////////////////////////////////////
-
-	//이펙트 효과 공장
+	//이펙트 효과 적용 공장
 	UPROPERTY(EditAnywhere, Category = BulletEffect)
 		class UParticleSystem* bulletEffectFactory;
-
-	//////////////////////////////////////이펙트 관련 선언 부////////////////////////////////////
 
 protected:
 	// Called when the game starts or when spawned
