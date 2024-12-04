@@ -89,7 +89,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		class USpringArmComponent* springArmComp;
 	//카메라 클래스
-	UPROPERTY(VisibleAnywhere, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		class UCameraComponent* tpsCamComp;
 	//총 스켈레탈메시 클래스
 	UPROPERTY(VisibleAnywhere, Category = GunMesh)
