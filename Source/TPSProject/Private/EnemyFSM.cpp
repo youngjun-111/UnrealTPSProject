@@ -6,6 +6,7 @@
 #include "Enemy.h"
 #include <Kismet/GameplayStatics.h>
 #include "TPSProject.h"
+#include <Components/CapsuleComponent.h>
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -145,6 +146,8 @@ void UEnemyFSM::OnDamageProcess()
 	{
 		//Á×Àº »óÅÂ·Î º¯°æ
 		mState = EEnemyState::Die;
+		//Ä¸½¶ Ãæµ¹Ã¼ ºñÈ°¼ºÈ­
+		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }
 
