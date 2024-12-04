@@ -86,6 +86,10 @@ public:
 		TSubclassOf<class ABullet> bulletFactory;
 
 
+	//이펙트 효과 공장
+	UPROPERTY(EditAnywhere, Category = BulletEffect)
+		class UParticleSystem* bulletEffectFactory;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

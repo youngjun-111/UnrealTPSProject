@@ -10,6 +10,7 @@
 #include "Bullet.h"
 #include <Components/StaticMeshComponent.h>
 #include <Blueprint/UserWidget.h>
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -70,7 +71,7 @@ ATPSPlayer::ATPSPlayer()
 		//5-4. 스태틱메시 데이터 할당
 		sniperGunComp->SetStaticMesh(TempSniperMesh.Object);
 		//5-5. 위치 조정
-		sniperGunComp->SetRelativeLocation(FVector(-22, 55, 120));
+		sniperGunComp->SetRelativeLocation(FVector(-14, 55, 120));
 		//5-6 크기 조정하기
 		sniperGunComp->SetRelativeScale3D(FVector(0.15f));
 	}
@@ -190,8 +191,39 @@ void ATPSPlayer::InputJump(const FInputActionValue& inputValue)
 void ATPSPlayer::InputFire(const FInputActionValue& inputValue)
 {
 	//총알 발사 처리
-	FTransform firePosition = gunMeshComp->GetSocketTransform(TEXT("FirePosition"));
-	GetWorld()->SpawnActor<ABullet>(bulletFactory, firePosition);
+	if (bUsingGrenadeGun)
+	{
+		FTransform firePosition = gunMeshComp->GetSocketTransform(TEXT("FirePosition"));
+		GetWorld()->SpawnActor<ABullet>(bulletFactory, firePosition);
+	} 
+	//스나이퍼건 사용 시
+	else
+	{
+		//LineTrace의 시작 위치
+		FVector startPos = tpsCamComp->GetComponentLocation();
+		//LineTrace의 종료 위치
+		FVector endPos = tpsCamComp->GetComponentLocation() + tpsCamComp ->GetForwardVector() * 5000;
+		//LineTrace의 충돌 정보를 담을 변수
+		FHitResult hitInfo;
+		//충동 옵션 설정 변수
+		FCollisionQueryParams params;
+		//자기 자신 은 충돌에서 제외(플레이어)
+		params.AddIgnoredActor(this);
+
+		//Channel필터를 이용한 LineTrace충돌 검출(충돌 정보, 시작 위치, 종료 위치, 검출 채널, 충돌 옵션)
+		bool bHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECC_Visibility, params);
+		//LineTrace가 부딛혔을 때
+		if (bHit)
+		{
+			//충돌 처리 -> 총알 파편 효과 재생
+			//퐁알 파편 효과 트랜스폼
+			FTransform bulletTrans;
+			//부딪힌 위치 할당
+			bulletTrans.SetLocation(hitInfo.ImpactPoint);
+			//총알 파편 효과 인스턴스 생성
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletEffectFactory, bulletTrans);
+		}
+	}
 }
 
 //기본 총 호출 함수
