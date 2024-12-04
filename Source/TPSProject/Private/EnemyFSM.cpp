@@ -158,7 +158,7 @@ void UEnemyFSM::DieState()
 	//등속운동 공식 P=P0+vt
 	FVector P0 = me->GetActorLocation();
 	FVector vt = FVector::DownVector * dieSpeed * GetWorld()->DeltaRealTimeSeconds;
-	FVector p = P0 = vt;
+	FVector p = P0 + vt;
 	me->SetActorLocation(p);
 
 	if (p.Z < -200.0f)
