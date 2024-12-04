@@ -118,16 +118,48 @@ void UEnemyFSM::AttackState()
 //피격
 void UEnemyFSM::DamageState()
 {
-
+	//1. 시간이 흘렀으니까
+	currentTime += GetWorld()->DeltaTimeSeconds;
+	//2. 경과 시간이 대기 시간을 초과 했다면
+	if (currentTime > damageDelayTime)
+	{
+		//3. 상태를 아이들로 변경
+		mState = EEnemyState::Idle;
+		//경과 시간 초기화
+		currentTime = 0;
+	}
 }
 
 void UEnemyFSM::OnDamageProcess()
 {
-	me->Destroy();
+	//체력 감소
+	hp--;
+	//체력이 남아있다면
+	if (hp > 0)
+	{
+		//피격상태로 전환
+		mState = EEnemyState::Damage;
+	}
+	//체력이 없다면
+	else
+	{
+		//죽은 상태로 변경
+		mState = EEnemyState::Die;
+	}
 }
 
 //죽음
 void UEnemyFSM::DieState()
 {
+	//계속 아래로 내려가고 싶다..
+	//등속운동 공식 P=P0+vt
+	FVector P0 = me->GetActorLocation();
+	FVector vt = FVector::DownVector * dieSpeed * GetWorld()->DeltaRealTimeSeconds;
+	FVector p = P0 = vt;
+	me->SetActorLocation(p);
 
+	if (p.Z < -200.0f)
+	{
+		me->Destroy();
+	}
 }

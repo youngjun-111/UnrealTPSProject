@@ -63,6 +63,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = FSM)
 		float attackDelayTime = 2.0f;
 
+	//체력
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = FSM)
+		int32 hp = 3;
+
+	//피격 대기 시간 선언
+	UPROPERTY(EditAnywhere, Category = FSM)
+		float damageDelayTime = 2.0f;
+
+	//아래로 사라지는 속도를 설정
+	UPROPERTY(EditAnywhere, Category = FSM)
+		float dieSpeed = 50.0f;
 	//피격 알림 이벤트 함수 선언
 	void OnDamageProcess();
 
