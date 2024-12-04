@@ -60,6 +60,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 		class UInputAction* ia_SniperGun;
 
+	//스나이퍼 조준 처리 클래스
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* ia_Sniper;
+	void SniperAim(const struct FInputActionValue& inputValue);
+	//스나이퍼를 사용하고 있는지에 대한 여부
+	bool bSniperAim = false;
+	//스나이퍼 UI위젯 공장
+	UPROPERTY(EditDefaultsOnly, Category = SniperUI)
+		TSubclassOf<class UUserWidget> sniperUIFactory;
+	//스나이퍼 UI 위젯 인스턴스
+	UPROPERTY()
+		class UUserWidget* _sniperUI;
+
 	//유탄총을 사용하고 있는지에 대한 여부
 	bool bUsingGrenadeGun = true;
 

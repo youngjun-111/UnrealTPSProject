@@ -9,6 +9,7 @@
 #include "InputActionValue.h"
 #include "Bullet.h"
 #include <Components/StaticMeshComponent.h>
+#include <Blueprint/UserWidget.h>
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -79,10 +80,10 @@ ATPSPlayer::ATPSPlayer()
 void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	//기본적으로 스나이퍼를 착용하도록 설정
-	ChangeToSniperGun(FInputActionValue());
+	
 
 	auto pc = Cast<APlayerController>(Controller);
+
 	if (pc)
 	{
 		auto subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer());
@@ -92,6 +93,11 @@ void ATPSPlayer::BeginPlay()
 			subsystem->AddMappingContext(imc_TPS, 0);
 		}
 	}
+
+	//1. 스나이퍼 UI위젯 인스턴스 생성
+	_sniperUI = CreateWidget(GetWorld(), sniperUIFactory);
+	//기본적으로 스나이퍼를 착용하도록 설정
+	ChangeToSniperGun(FInputActionValue());
 }
 
 // Called every frame
@@ -143,6 +149,10 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		//각 총 교체 이벤트 처리 함수 바인딩
 		PlayerInput->BindAction(ia_GrenadeGun, ETriggerEvent::Started, this, &ATPSPlayer::ChangeToGrenadeGun);
 		PlayerInput->BindAction(ia_SniperGun, ETriggerEvent::Started, this, &ATPSPlayer::ChangeToSniperGun);
+
+		//스나이퍼 조준 처리 함수 바인딩
+		PlayerInput->BindAction(ia_Sniper, ETriggerEvent::Started, this, &ATPSPlayer::SniperAim);
+		PlayerInput->BindAction(ia_Sniper, ETriggerEvent::Completed, this, &ATPSPlayer::SniperAim);
 	}
 }
 
@@ -198,4 +208,27 @@ void ATPSPlayer::ChangeToSniperGun(const FInputActionValue& inputValue)
 	bUsingGrenadeGun = false;
 	sniperGunComp->SetVisibility(true);
 	gunMeshComp->SetVisibility(false);
+}
+
+//스나이퍼 모드 함수
+void ATPSPlayer::SniperAim(const struct FInputActionValue& inputValue)
+{
+	//Pressed 입력처리
+	if(bSniperAim == false)
+	{
+		//1. 스나이퍼 조준 모드 활성화
+		bSniperAim = true;
+		//2. 스나이퍼 조준UI등록
+		_sniperUI->AddToViewport();
+		//3. 카메라의 시야각 Field Of View를 설정
+		tpsCamComp->SetFieldOfView(45.0f);
+	} else
+	{
+		//1. 스나이퍼 조준 모드 비활성화
+		bSniperAim = false;
+		//2. 스나이퍼 조준 UI 제거
+		_sniperUI->RemoveFromParent();
+		//3. 카메라 시야각 원래대로 복권
+		tpsCamComp->SetFieldOfView(90.0f);
+	}
 }
