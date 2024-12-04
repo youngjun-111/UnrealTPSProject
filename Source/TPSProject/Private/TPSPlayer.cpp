@@ -11,7 +11,8 @@
 #include <Components/StaticMeshComponent.h>
 #include <Blueprint/UserWidget.h>
 #include <Kismet/GameplayStatics.h>
-
+#include "Enemy.h"
+#include "EnemyFSM.h"
 // Sets default values
 ATPSPlayer::ATPSPlayer()
 {
@@ -19,8 +20,7 @@ ATPSPlayer::ATPSPlayer()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//1.스켈레탈메시 데이터를 불러오고싶다.
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh
-	(TEXT("SkeletalMesh'/Game/Mannequin/Character/Mesh/SK_Mannequin.SK_Mannequin'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("SkeletalMesh'/Game/Characters/Mannequin_UE4/Meshes/SK_Mannequin.SK_Mannequin'"));
 	if (TempMesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(TempMesh.Object);
@@ -238,6 +238,14 @@ void ATPSPlayer::InputFire(const FInputActionValue& inputValue)
 			FVector force = dir * hitComp->GetMass() * 500000;
 			//3. 그방향으로 날리기
 			hitComp->AddForceAtLocation(force, hitInfo.ImpactPoint);
+		}
+
+		//부딪힌 대상이 적인지 판단
+		auto enemy = hitInfo.GetActor()->GetDefaultSubobjectByName(TEXT("FSM"));
+		if (enemy)
+		{
+			auto enemyFSM = Cast<UEnemyFSM>(enemy);
+			enemyFSM->OnDamageProcess();
 		}
 	}
 }

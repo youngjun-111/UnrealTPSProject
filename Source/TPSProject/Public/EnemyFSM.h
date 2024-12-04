@@ -40,6 +40,32 @@ public:
 	//죽음상태
 	void DieState();
 
+	//대기 상태
+	UPROPERTY(EditDefaultsOnly, Category = FSM)
+	//대기 시간
+	float idleDelayTime = 2;
+	//경과 시간
+	float currentTime = 0;
+
+	//타깃
+	UPROPERTY(VisibleAnywhere, Category = FSM)
+		class ATPSPlayer* target;
+
+	//소유 액터
+	UPROPERTY()
+		class AEnemy* me;
+
+	//공격 가능 범위
+	UPROPERTY(EditAnywhere, Category = FSM)
+		float attackRange = 150.0f;
+
+	//공격 대기 시간
+	UPROPERTY(EditAnywhere, Category = FSM)
+		float attackDelayTime = 2.0f;
+
+	//피격 알림 이벤트 함수 선언
+	void OnDamageProcess();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

@@ -2,6 +2,10 @@
 
 
 #include "EnemyFSM.h"
+#include "TPSPlayer.h"
+#include "Enemy.h"
+#include <Kismet/GameplayStatics.h>
+#include "TPSProject.h"
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -16,6 +20,13 @@ UEnemyFSM::UEnemyFSM()
 void UEnemyFSM::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//월드에서 ATPSPlayer 타깃 찾아오기
+	auto actor = UGameplayStatics::GetActorOfClass(GetWorld(), ATPSPlayer::StaticClass());
+	//ATPSPlayer 타입으로 캐스팅
+	target = Cast<ATPSPlayer>(actor);
+	//소유 객체 가져오기
+	me = Cast<AEnemy>(GetOwner());
 }
 
 // Called every frame
@@ -43,23 +54,64 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		break;
 	}
 
+	FString logMsg = UEnum::GetValueAsString(mState);
+	GEngine->AddOnScreenDebugMessage(0, 1, FColor::Cyan, logMsg);
 }
 
 //아이들
 void UEnemyFSM::IdleState()
 {
-
+	//1. 시간이 흘렀으니까
+	currentTime += GetWorld()->DeltaTimeSeconds;
+	//2. 만약 경과 시간이 대기 기산을 초과했다면
+	if (currentTime > idleDelayTime)
+	{
+		//3. 이동 상태로 전환
+		mState = EEnemyState::Move;
+		//경과 시간 초기화
+		currentTime = 0;
+	}
 }
 
 //이동
 void UEnemyFSM::MoveState()
 {
-
+	//1. 타깃 목적지를 할당
+	FVector destination = target->GetActorLocation();
+	//2. 방향이 필요
+	FVector dir = destination - me->GetActorLocation();
+	//3. 구한 방향으로 이동하고 싶다.
+	me->AddMovementInput(dir.GetSafeNormal());
+	//타깃과 가까워지면 공격 상태로 변경
+	if (dir.Size() < attackRange)
+	{
+		mState = EEnemyState::Attack;
+	}
 }
 
 //공격
 void UEnemyFSM::AttackState()
 {
+	//목표: 일정 시간에 한 번씩 공격하게 한다.
+	//1. 시간이 흘러야 한다.
+	currentTime += GetWorld()->DeltaTimeSeconds;
+	//2. 공격 시간이 됐으니까
+	if (currentTime > attackDelayTime)
+	{
+		//3. 공격하고 싶다.
+		PRINT_LOG(TEXT("Attack!!"));
+		//경과 시간 초기화
+		currentTime = 0;
+	}
+
+	//1. 타깃과의 거리가 필요
+	float distance = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
+	//2. 타깃과의 거리가 공격 범위를 벗어났으니까
+	if (distance > attackRange)
+	{
+		//3. 상태를 이동으로 전환
+		mState = EEnemyState::Move;
+	}
 
 }
 
@@ -67,6 +119,11 @@ void UEnemyFSM::AttackState()
 void UEnemyFSM::DamageState()
 {
 
+}
+
+void UEnemyFSM::OnDamageProcess()
+{
+	me->Destroy();
 }
 
 //죽음
