@@ -18,6 +18,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = PlayerAnim)
 		float speed = 0;
 
-	//매프레임 갱신되는 함수
+	//매프레임 갱신되는 함수 오버라이딩 
+	//오버라이딩은 cpp에서 반드시 구현 해줘야 함 그래야 빌드가 가능해짐.
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 };

@@ -31,7 +31,7 @@ ATPSPlayer::ATPSPlayer()
 
 	//3.TPS 카메라를 붙이고 싶다.
 	//3-1. SpringArm컴포넌트 붙이기
-	springArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringAtmComp"));
+	springArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	springArmComp->SetupAttachment(RootComponent);
 	springArmComp->SetRelativeLocation(FVector(0, 70, 90));
 	springArmComp->TargetArmLength = 400;
@@ -39,7 +39,7 @@ ATPSPlayer::ATPSPlayer()
 	springArmComp->bUsePawnControlRotation = true;
 	//3-2. Camera컴포넌트를 붙인다.
 
-	tpsCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("TpsCamComp"));
+	tpsCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("TpsCam"));
 	tpsCamComp->SetupAttachment(springArmComp);
 	//해당 컨트롤러는 Yaw만 트루로 설정 Yaw는 z축 회전 Roll은 X축 회전 Pich는 Y충 회전
 	tpsCamComp->bUsePawnControlRotation = false;
@@ -47,7 +47,7 @@ ATPSPlayer::ATPSPlayer()
 	JumpMaxCount = 2;
 
 	// 4. 총 스켈레탈메시 컴포넌트 등록
-	gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComp"));
+	gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
 	// 4-1. 부모 컴포넌트를 Mesh 컴포넌트로 설정
 	gunMeshComp->SetupAttachment(GetMesh());
 	// 4-2. 스켈레탈메시 데이터 로드
@@ -61,7 +61,7 @@ ATPSPlayer::ATPSPlayer()
 	}
 
 	//5. 스나이퍼건 컴포넌트 등록
-	sniperGunComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SniperGunComp"));
+	sniperGunComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SniperGun"));
 	//5-1. 부모 컴포넌트를 Mesh 컴포넌트로 설정
 	sniperGunComp->SetupAttachment(GetMesh());
 	//5-2. 해당 컴포넌트의 경로를 로드해준다
