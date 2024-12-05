@@ -3,6 +3,7 @@
 
 #include "TPSPlayer.h"
 #include <GameFramework/SpringArmComponent.h>
+#include <GameFramework/CharacterMovementComponent.h>
 #include <Camera/CameraComponent.h>
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -13,6 +14,8 @@
 #include <Kismet/GameplayStatics.h>
 #include "Enemy.h"
 #include "EnemyFSM.h"
+#include "PlayerAnim.h"
+
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -83,6 +86,8 @@ void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//초기 속도를 걷기로 설정해준다.
+	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 
 	auto pc = Cast<APlayerController>(Controller);
 
@@ -160,6 +165,10 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		//스나이퍼 조준 처리 함수 바인딩
 		PlayerInput->BindAction(ia_Sniper, ETriggerEvent::Started, this, &ATPSPlayer::SniperAim);
 		PlayerInput->BindAction(ia_Sniper, ETriggerEvent::Completed, this, &ATPSPlayer::SniperAim);
+
+		//달리기 입력 이벤트 처리 함수 바인딩
+		PlayerInput->BindAction(ia_Run, ETriggerEvent::Started, this, &ATPSPlayer::InputRun);
+		PlayerInput->BindAction(ia_Run, ETriggerEvent::Completed, this, &ATPSPlayer::InputRun);
 	}
 }
 
@@ -193,9 +202,27 @@ void ATPSPlayer::InputJump(const FInputActionValue& inputValue)
 	Jump();
 }
 
+void ATPSPlayer::InputRun()
+{
+	auto movement = GetCharacterMovement();
+	//현재 달리기 모드라면 즉, 걷기 속도가 MaxWalkSpeed보다 작다면
+	if (movement->MaxWalkSpeed > walkSpeed)
+	{
+		//걷기 속도로 전환
+		movement->MaxWalkSpeed = walkSpeed;
+	} else
+	{
+		movement->MaxWalkSpeed = runSpeed;
+	}
+}
+
 //발사 함수
 void ATPSPlayer::InputFire(const FInputActionValue& inputValue)
 {
+	//공격 에니메이션 재생
+	auto anim = Cast<UPlayerAnim>(GetMesh()->GetAnimInstance());
+	anim->PlayAttackAnim();
+
 	//총알 발사 처리
 	if (bUsingGrenadeGun)
 	{

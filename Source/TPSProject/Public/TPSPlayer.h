@@ -36,7 +36,17 @@ public:
 		class UInputAction* ia_Move;
 	//이동 속도 처리
 	UPROPERTY(EditAnywhere, Category = PlayerSetting)
-		float walkSpeed = 600;
+		float walkSpeed = 200;
+	UPROPERTY(EditAnywhere, Category = PlayerSetting)
+		float runSpeed = 600;
+
+	//달리기 입력
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+		class UInputAction* ia_Run;
+
+	//달리기 이벤트 처리 함수
+	void InputRun();
+
 	//이동 방향
 	FVector direction;
 	//이동 조건 함수
