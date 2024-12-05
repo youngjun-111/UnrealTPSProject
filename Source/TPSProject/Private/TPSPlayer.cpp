@@ -16,7 +16,6 @@
 #include "EnemyFSM.h"
 #include "PlayerAnim.h"
 
-
 // Sets default values
 ATPSPlayer::ATPSPlayer()
 {
@@ -34,7 +33,7 @@ ATPSPlayer::ATPSPlayer()
 
 	//3.TPS 카메라를 붙이고 싶다.
 	//3-1. SpringArm컴포넌트 붙이기
-	springArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	springArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	springArmComp->SetupAttachment(RootComponent);
 	springArmComp->SetRelativeLocation(FVector(0, 70, 90));
 	springArmComp->TargetArmLength = 400;
@@ -42,7 +41,7 @@ ATPSPlayer::ATPSPlayer()
 	springArmComp->bUsePawnControlRotation = true;
 	//3-2. Camera컴포넌트를 붙인다.
 
-	tpsCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("TpsCam"));
+	tpsCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("TpsCamComp"));
 	tpsCamComp->SetupAttachment(springArmComp);
 	//해당 컨트롤러는 Yaw만 트루로 설정 Yaw는 z축 회전 Roll은 X축 회전 Pich는 Y충 회전
 	tpsCamComp->bUsePawnControlRotation = false;
@@ -50,9 +49,10 @@ ATPSPlayer::ATPSPlayer()
 	JumpMaxCount = 2;
 
 	// 4. 총 스켈레탈메시 컴포넌트 등록
-	gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
+	gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComp"));
 	// 4-1. 부모 컴포넌트를 Mesh 컴포넌트로 설정
-	gunMeshComp->SetupAttachment(GetMesh());
+	gunMeshComp->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
+
 	// 4-2. 스켈레탈메시 데이터 로드
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
 	if(TempGunMesh.Succeeded())
@@ -60,13 +60,15 @@ ATPSPlayer::ATPSPlayer()
 		//4-4 스켈레탈 메시 데이터 할당
 		gunMeshComp->SetSkeletalMesh(TempGunMesh.Object);
 		//4-5 위치 조정하기
-		gunMeshComp->SetRelativeLocation(FVector(-14, 52, 120));
+		gunMeshComp->SetRelativeLocation(FVector(-17, 0, -3));
+		gunMeshComp->SetRelativeLocation(FVector(0, 90, 0));
 	}
 
 	//5. 스나이퍼건 컴포넌트 등록
-	sniperGunComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SniperGun"));
+	sniperGunComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SniperGunComp"));
 	//5-1. 부모 컴포넌트를 Mesh 컴포넌트로 설정
-	sniperGunComp->SetupAttachment(GetMesh());
+	sniperGunComp->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
+
 	//5-2. 해당 컴포넌트의 경로를 로드해준다
 	ConstructorHelpers::FObjectFinder<UStaticMesh> TempSniperMesh(TEXT("StaticMesh'/Game/SniperGun/sniper1.sniper1'"));
 	//5-3. 로드에 성공했다면
@@ -75,9 +77,17 @@ ATPSPlayer::ATPSPlayer()
 		//5-4. 스태틱메시 데이터 할당
 		sniperGunComp->SetStaticMesh(TempSniperMesh.Object);
 		//5-5. 위치 조정
-		sniperGunComp->SetRelativeLocation(FVector(-14, 55, 120));
+		sniperGunComp->SetRelativeLocation(FVector(-42, 7, 1));
+		sniperGunComp->SetRelativeLocation(FVector(0, 90, 0));
 		//5-6 크기 조정하기
 		sniperGunComp->SetRelativeScale3D(FVector(0.15f));
+	}
+
+	ConstructorHelpers::FObjectFinder<USoundBase> tempSound(TEXT("SoundWave'/Game/SniperGun/Rifle.Rifle'"));
+	
+	if (tempSound.Succeeded())
+	{
+		bulletSound = tempSound.Object;
 	}
 }
 
@@ -219,6 +229,13 @@ void ATPSPlayer::InputRun()
 //발사 함수
 void ATPSPlayer::InputFire(const FInputActionValue& inputValue)
 {
+
+	//카메라 셰이크 재생
+	auto controller = GetWorld()->GetFirstPlayerController();
+	controller->PlayerCameraManager->StartCameraShake(cameraShake);
+	//총알 발사 사운드 재생
+	UGameplayStatics::PlaySound2D(GetWorld(), bulletSound);
+
 	//공격 에니메이션 재생
 	auto anim = Cast<UPlayerAnim>(GetMesh()->GetAnimInstance());
 	anim->PlayAttackAnim();

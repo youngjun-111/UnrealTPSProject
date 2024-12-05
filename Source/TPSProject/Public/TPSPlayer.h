@@ -99,6 +99,12 @@ public:
 	UPROPERTY()
 	class UUserWidget* _crosshairUI;
 
+	//카메라 셰이크 블루프린트를 저장할 변수
+	UPROPERTY(EditDefaultsOnly, Category = CameraMotion)
+		TSubclassOf<class UCameraShakeBase> cameraShake;
+	//총알 발사 사운드
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+		class USoundBase* bulletSound;
 
 	//각 무기 교체 함수
 	void ChangeToGrenadeGun(const struct FInputActionValue& inputValue);
