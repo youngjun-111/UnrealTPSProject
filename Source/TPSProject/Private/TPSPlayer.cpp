@@ -60,7 +60,7 @@ ATPSPlayer::ATPSPlayer()
 		//4-4 스켈레탈 메시 데이터 할당
 		gunMeshComp->SetSkeletalMesh(TempGunMesh.Object);
 		//4-5 위치 조정하기
-		gunMeshComp->SetRelativeLocation(FVector(-17, 0, -3));
+		gunMeshComp->SetRelativeRotation(FRotator(-17, 0, -3));
 		gunMeshComp->SetRelativeLocation(FVector(0, 90, 0));
 	}
 
@@ -77,7 +77,7 @@ ATPSPlayer::ATPSPlayer()
 		//5-4. 스태틱메시 데이터 할당
 		sniperGunComp->SetStaticMesh(TempSniperMesh.Object);
 		//5-5. 위치 조정
-		sniperGunComp->SetRelativeLocation(FVector(-42, 7, 1));
+		sniperGunComp->SetRelativeRotation(FRotator(-42, 7, 1));
 		sniperGunComp->SetRelativeLocation(FVector(0, 90, 0));
 		//5-6 크기 조정하기
 		sniperGunComp->SetRelativeScale3D(FVector(0.15f));
